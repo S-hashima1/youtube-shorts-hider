@@ -1,0 +1,43 @@
+/*
+ * Shorts 関連の要素を非表示にするルール。
+ * html 要素に .ysh-hide-shorts が付いている間だけ有効(content.js が制御)。
+ */
+
+/* ホーム/登録チャンネルのショート棚(旧・新UI両対応) */
+html.ysh-hide-shorts ytd-rich-shelf-renderer[is-shorts],
+html.ysh-hide-shorts ytd-reel-shelf-renderer,
+html.ysh-hide-shorts ytd-rich-section-renderer:has(ytd-rich-shelf-renderer[is-shorts]),
+html.ysh-hide-shorts ytd-rich-section-renderer:has([is-shorts]),
+html.ysh-hide-shorts grid-shelf-view-model:has(ytm-shorts-lockup-view-model),
+html.ysh-hide-shorts grid-shelf-view-model:has(shorts-lockup-view-model),
+html.ysh-hide-shorts ytd-rich-section-renderer:has(grid-shelf-view-model:has(ytm-shorts-lockup-view-model)),
+
+/* 個別のショート動画タイル(ホーム・検索・チャンネル・関連動画) */
+html.ysh-hide-shorts ytd-rich-item-renderer:has(a[href^="/shorts/"]),
+html.ysh-hide-shorts ytd-video-renderer:has(a[href^="/shorts/"]),
+html.ysh-hide-shorts ytd-grid-video-renderer:has(a[href^="/shorts/"]),
+html.ysh-hide-shorts ytd-compact-video-renderer:has(a[href^="/shorts/"]),
+html.ysh-hide-shorts ytm-shorts-lockup-view-model,
+html.ysh-hide-shorts ytm-shorts-lockup-view-model-v2,
+
+/* 左サイドバー / ミニサイドバーの「ショート」リンク */
+html.ysh-hide-shorts ytd-guide-entry-renderer:has(a[title="Shorts"]),
+html.ysh-hide-shorts ytd-guide-entry-renderer:has(a[title="ショート"]),
+html.ysh-hide-shorts ytd-mini-guide-entry-renderer:has(a[title="Shorts"]),
+html.ysh-hide-shorts ytd-mini-guide-entry-renderer:has(a[title="ショート"]),
+
+/* チャンネルページの「ショート」タブ */
+html.ysh-hide-shorts yt-tab-shape[tab-title="Shorts"],
+html.ysh-hide-shorts yt-tab-shape[tab-title="ショート"],
+
+/* 通知やチップバーなどに出る Shorts への導線 */
+html.ysh-hide-shorts ytd-reel-item-renderer,
+html.ysh-hide-shorts a[href^="/shorts/"][class*="ytd-thumbnail"],
+
+/* モバイル版 (m.youtube.com) */
+html.ysh-hide-shorts ytm-reel-shelf-renderer,
+html.ysh-hide-shorts ytm-rich-section-renderer:has(ytm-reel-shelf-renderer),
+html.ysh-hide-shorts ytm-pivot-bar-item-renderer:has(.pivot-shorts),
+html.ysh-hide-shorts ytm-video-with-context-renderer:has(a[href^="/shorts/"]) {
+  display: none !important;
+}
