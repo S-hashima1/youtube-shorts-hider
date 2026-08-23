@@ -29,6 +29,23 @@ YouTube のショート動画(Shorts)を非表示にする Chrome 拡張機能�
 「ショート動画を非表示」のスイッチを OFF にしてください。
 開いている YouTube のタブに即時反映されます。
 
+## iPhone(Safari)で使う
+
+Chrome 拡張は iPhone では動きませんが、ユーザースクリプト版
+(`userscript/youtube-shorts-hider.user.js`)を用意しています。
+
+1. App Store から無料アプリ **「Userscripts」** をインストールする
+2. iPhone の **設定 → アプリ → Safari → 機能拡張 → Userscripts** を ON にする
+   (「すべてのウェブサイト」で許可しておく)
+3. Userscripts アプリを開き、保存先フォルダを設定する
+4. Safari で下記 URL を開き、表示されたコードを全選択してコピーする
+   <https://raw.githubusercontent.com/S-hashima1/meditation/claude/youtube-shorts-hide-extension-43wv2x/userscript/youtube-shorts-hider.user.js>
+5. Userscripts アプリで「＋」→「New JS」を選び、中身をすべて貼り付けて保存する
+6. Safari で `youtube.com` を開くと Shorts が非表示になる
+
+※ YouTube 公式アプリの表示は変更できません。Safari で youtube.com を
+開いたときのみ有効です。
+
 ## 仕組み
 
 - CSS(`hide-shorts.css`)で Shorts 関連の要素を `display: none` にします
@@ -46,6 +63,7 @@ content.js         動的要素の非表示と /shorts/ リダイレクト
 hide-shorts.css    Shorts 要素を隠す CSS
 popup/             ON/OFF 切り替え用ポップアップ
 icons/             拡張機能アイコン
+userscript/        iPhone(Safari + Userscripts アプリ)用のユーザースクリプト版
 ```
 
 ## 注意
