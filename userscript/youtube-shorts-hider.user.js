@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Shorts Hider
 // @namespace    https://github.com/S-hashima1/meditation
-// @version      1.2.0
+// @version      1.3.0
 // @description  YouTube のショート動画(Shorts)を非表示にします。iPhone の Safari では「Userscripts」アプリで動作します。
 // @match        https://www.youtube.com/*
 // @match        https://m.youtube.com/*
@@ -11,6 +11,11 @@
 
 (() => {
   "use strict";
+
+  // ---- ブロックしたいキーワード ----------------------------------------
+  // ここに書いた語を含む動画タイルを非表示にする(大文字小文字は区別しない)。
+  // 追加したい語があればこの配列に足すだけでよい。
+  const BLOCK_KEYWORDS = ["乃木坂", "nogizaka"];
 
   // ---- /shorts/ ページを通常プレイヤーへリダイレクト -------------------
 
@@ -123,8 +128,38 @@
     return el;
   }
 
+  // キーワードブロック対象となる「動画1件分のタイル」。棚やセクション全体を
+  // 巻き込まないよう、タイル単位の要素だけを見る。
+  const TILE_SELECTOR = [
+    "ytm-rich-item-renderer",
+    "ytm-video-with-context-renderer",
+    "ytm-shorts-lockup-view-model",
+    "ytm-shorts-lockup-view-model-v2",
+    "ytd-rich-item-renderer",
+    "ytd-video-renderer",
+    "ytd-grid-video-renderer",
+    "ytd-compact-video-renderer",
+    "yt-lockup-view-model",
+  ].join(",");
+
+  const KEYWORDS_LOWER = BLOCK_KEYWORDS.map((k) => k.toLowerCase()).filter(
+    Boolean
+  );
+
+  function hideBlockedKeywordTiles() {
+    if (!KEYWORDS_LOWER.length) return;
+    for (const tile of document.querySelectorAll(TILE_SELECTOR)) {
+      if (tile.hidden) continue;
+      const text = tile.textContent.toLowerCase();
+      if (KEYWORDS_LOWER.some((k) => text.includes(k))) {
+        hideElement(tile);
+      }
+    }
+  }
+
   function hideDynamicElements() {
     if (!document.body) return;
+    hideBlockedKeywordTiles();
     // 「ショート」というタイトルの棚
     for (const shelf of document.querySelectorAll(SHELF_SELECTOR)) {
       if (shelf.hidden) continue;
@@ -166,7 +201,7 @@
   function showBadge() {
     if (!document.body) return;
     const badge = document.createElement("div");
-    badge.textContent = "Shorts Hider v1.2.0 動作中";
+    badge.textContent = "Shorts Hider v1.3.0 動作中";
     badge.style.cssText =
       "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);" +
       "background:rgba(0,0,0,.75);color:#fff;padding:6px 14px;" +

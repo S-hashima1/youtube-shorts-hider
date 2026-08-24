@@ -5,7 +5,9 @@
   "use strict";
 
   const HIDE_CLASS = "ysh-hide-shorts";
+  const DEFAULT_KEYWORDS = ["乃木坂"];
   let enabled = true;
+  let keywordsLower = DEFAULT_KEYWORDS.map((k) => k.toLowerCase());
 
   // ---- 有効/無効の反映 -------------------------------------------------
 
@@ -17,16 +19,28 @@
     }
   }
 
-  chrome.storage.sync.get({ enabled: true }, (items) => {
-    enabled = items.enabled;
-    applyEnabledState();
-  });
-
-  chrome.storage.onChanged.addListener((changes, area) => {
-    if (area === "sync" && changes.enabled) {
-      enabled = changes.enabled.newValue;
+  chrome.storage.sync.get(
+    { enabled: true, blockKeywords: DEFAULT_KEYWORDS },
+    (items) => {
+      enabled = items.enabled;
+      keywordsLower = items.blockKeywords
+        .map((k) => k.trim().toLowerCase())
+        .filter(Boolean);
       applyEnabledState();
     }
+  );
+
+  chrome.storage.onChanged.addListener((changes, area) => {
+    if (area !== "sync") return;
+    if (changes.enabled) {
+      enabled = changes.enabled.newValue;
+    }
+    if (changes.blockKeywords) {
+      keywordsLower = changes.blockKeywords.newValue
+        .map((k) => k.trim().toLowerCase())
+        .filter(Boolean);
+    }
+    applyEnabledState();
   });
 
   // ---- /shorts/ ページを通常プレイヤーへリダイレクト -------------------
@@ -71,8 +85,34 @@
     el.style.setProperty("display", "none", "important");
   }
 
+  // キーワードブロック対象となる「動画1件分のタイル」。棚やセクション全体を
+  // 巻き込まないよう、タイル単位の要素だけを見る。
+  const TILE_SELECTOR = [
+    "ytm-rich-item-renderer",
+    "ytm-video-with-context-renderer",
+    "ytm-shorts-lockup-view-model",
+    "ytm-shorts-lockup-view-model-v2",
+    "ytd-rich-item-renderer",
+    "ytd-video-renderer",
+    "ytd-grid-video-renderer",
+    "ytd-compact-video-renderer",
+    "yt-lockup-view-model",
+  ].join(",");
+
+  function hideBlockedKeywordTiles() {
+    if (!keywordsLower.length) return;
+    for (const tile of document.querySelectorAll(TILE_SELECTOR)) {
+      if (tile.hidden) continue;
+      const text = tile.textContent.toLowerCase();
+      if (keywordsLower.some((k) => text.includes(k))) {
+        hideElement(tile);
+      }
+    }
+  }
+
   function hideDynamicElements() {
     if (!enabled) return;
+    hideBlockedKeywordTiles();
     for (const shelf of document.querySelectorAll(SHELF_SELECTOR)) {
       if (shelf.hidden) continue;
       const title = shelf.querySelector(
