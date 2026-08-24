@@ -49,6 +49,28 @@
 
   const SHORTS_TITLE = /^(shorts|ショート)$/i;
 
+  // /shorts へのリンクを含む動画タイル・棚の入れ物。DOM 構造が変わっても
+  // リンク先 URL は変わらないので、これが最後の砦になる。
+  const ITEM_CONTAINERS = [
+    "ytm-rich-item-renderer",
+    "ytm-video-with-context-renderer",
+    "ytm-reel-item-renderer",
+    "ytm-reel-shelf-renderer",
+    "ytm-rich-section-renderer",
+    "ytd-rich-item-renderer",
+    "ytd-video-renderer",
+    "ytd-grid-video-renderer",
+    "ytd-compact-video-renderer",
+    "yt-lockup-view-model",
+    "grid-shelf-view-model",
+  ].join(",");
+
+  function hideElement(el) {
+    if (!el || el.hidden) return;
+    el.hidden = true;
+    el.style.setProperty("display", "none", "important");
+  }
+
   function hideDynamicElements() {
     if (!enabled) return;
     for (const shelf of document.querySelectorAll(SHELF_SELECTOR)) {
@@ -57,9 +79,12 @@
         "#title, .shelf-title, h2, [id='title-text']"
       );
       if (title && SHORTS_TITLE.test(title.textContent.trim())) {
-        shelf.hidden = true;
-        shelf.style.display = "none";
+        hideElement(shelf);
       }
+    }
+    // /shorts へのリンクを含むタイル(URL ベースなので UI 変更に強い)
+    for (const link of document.querySelectorAll('a[href^="/shorts"]')) {
+      hideElement(link.closest(ITEM_CONTAINERS));
     }
   }
 

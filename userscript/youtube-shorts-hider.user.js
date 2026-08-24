@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Shorts Hider
 // @namespace    https://github.com/S-hashima1/meditation
-// @version      1.0.0
+// @version      1.1.0
 // @description  YouTube のショート動画(Shorts)を非表示にします。iPhone の Safari では「Userscripts」アプリで動作します。
 // @match        https://www.youtube.com/*
 // @match        https://m.youtube.com/*
@@ -18,6 +18,9 @@
     const match = location.pathname.match(/^\/shorts\/([\w-]{5,})/);
     if (match) {
       location.replace(`${location.origin}/watch?v=${match[1]}`);
+    } else if (/^\/shorts\/?$/.test(location.pathname)) {
+      // ID なしの Shorts フィードはホームへ
+      location.replace(`${location.origin}/`);
     }
   }
 
@@ -84,15 +87,49 @@
 
   const SHORTS_TITLE = /^(shorts|ショート)$/i;
 
+  // /shorts へのリンクを含む動画タイル・棚の入れ物。DOM 構造が変わっても
+  // リンク先 URL は変わらないので、これが最後の砦になる。
+  const ITEM_CONTAINERS = [
+    "ytm-rich-item-renderer",
+    "ytm-video-with-context-renderer",
+    "ytm-reel-item-renderer",
+    "ytm-reel-shelf-renderer",
+    "ytm-rich-section-renderer",
+    "ytd-rich-item-renderer",
+    "ytd-video-renderer",
+    "ytd-grid-video-renderer",
+    "ytd-compact-video-renderer",
+    "yt-lockup-view-model",
+    "grid-shelf-view-model",
+  ].join(",");
+
+  function hideElement(el) {
+    if (!el || el.hidden) return;
+    el.hidden = true;
+    el.style.setProperty("display", "none", "important");
+  }
+
   function hideDynamicElements() {
+    // 「ショート」というタイトルの棚
     for (const shelf of document.querySelectorAll(SHELF_SELECTOR)) {
       if (shelf.hidden) continue;
       const title = shelf.querySelector(
         "#title, .shelf-title, h2, [id='title-text']"
       );
       if (title && SHORTS_TITLE.test(title.textContent.trim())) {
-        shelf.hidden = true;
-        shelf.style.display = "none";
+        hideElement(shelf);
+      }
+    }
+    // /shorts へのリンクを含むタイル(URL ベースなので UI 変更に強い)
+    for (const link of document.querySelectorAll('a[href^="/shorts"]')) {
+      hideElement(link.closest(ITEM_CONTAINERS));
+    }
+    // 画面下部タブバーの「ショート」ボタン(モバイル版)
+    for (const tab of document.querySelectorAll(
+      "ytm-pivot-bar-item-renderer"
+    )) {
+      if (SHORTS_TITLE.test(tab.textContent.trim())) {
+        hideElement(tab);
       }
     }
   }
@@ -129,4 +166,7 @@
   } else {
     startObserver();
   }
+
+  // MutationObserver が拾えない再描画への保険
+  setInterval(hideDynamicElements, 1500);
 })();
