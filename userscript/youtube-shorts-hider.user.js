@@ -1,6 +1,6 @@
 // ==UserScript==
 // @name         YouTube Shorts Hider
-// @namespace    https://github.com/S-hashima1/meditation
+// @namespace    youtube-shorts-hider
 // @version      1.3.0
 // @description  YouTube のショート動画(Shorts)を非表示にします。iPhone の Safari では「Userscripts」アプリで動作します。
 // @match        https://www.youtube.com/*

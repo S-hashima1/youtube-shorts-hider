@@ -41,9 +41,8 @@ Chrome 拡張は iPhone では動きませんが、ユーザースクリプト�
 2. iPhone の **設定 → アプリ → Safari → 機能拡張 → Userscripts** を ON にする
    (「すべてのウェブサイト」で許可しておく)
 3. Userscripts アプリを開き、保存先フォルダを設定する
-4. Safari で下記 URL を開き、表示されたコードを全選択してコピーする
-   <https://raw.githubusercontent.com/S-hashima1/meditation/claude/youtube-shorts-hide-extension-43wv2x/userscript/youtube-shorts-hider.user.js>
-5. Userscripts アプリで「＋」→「New JS」を選び、中身をすべて貼り付けて保存する
+4. このリポジトリの `userscript/youtube-shorts-hider.user.js` をiPhoneへ保存する
+5. Userscripts アプリで保存したファイルを開くか、「＋」→「New JS」を選んで中身を貼り付けて保存する
 6. Safari で `youtube.com` を開くと Shorts が非表示になる
 
 ※ YouTube 公式アプリの表示は変更できません。Safari で youtube.com を
