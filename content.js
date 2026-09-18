@@ -5,6 +5,7 @@
   "use strict";
 
   const HIDE_CLASS = "ysh-hide-shorts";
+  const JS_HIDE_ATTR = "data-ysh-hidden";
   const DEFAULT_KEYWORDS = ["乃木坂"];
   let enabled = true;
   let keywordsLower = DEFAULT_KEYWORDS.map((k) => k.toLowerCase());
@@ -16,6 +17,8 @@
     if (enabled) {
       redirectIfShortsPage();
       hideDynamicElements();
+    } else {
+      restoreHiddenElements();
     }
   }
 
@@ -80,9 +83,19 @@
   ].join(",");
 
   function hideElement(el) {
-    if (!el || el.hidden) return;
+    if (!el || el.hasAttribute(JS_HIDE_ATTR) || el.hidden) return;
+    el.setAttribute(JS_HIDE_ATTR, "");
     el.hidden = true;
     el.style.setProperty("display", "none", "important");
+  }
+
+  // OFF にしたとき、JS で付けた非表示を外して Shorts を戻す。
+  function restoreHiddenElements() {
+    for (const el of document.querySelectorAll(`[${JS_HIDE_ATTR}]`)) {
+      el.removeAttribute(JS_HIDE_ATTR);
+      el.hidden = false;
+      el.style.removeProperty("display");
+    }
   }
 
   // キーワードブロック対象となる「動画1件分のタイル」。棚やセクション全体を
