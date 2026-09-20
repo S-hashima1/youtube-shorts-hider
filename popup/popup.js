@@ -1,4 +1,4 @@
-const DEFAULT_KEYWORDS = ["乃木坂"];
+const DEFAULT_KEYWORDS = [];
 
 const toggle = document.getElementById("enabled-toggle");
 const keywordsArea = document.getElementById("keywords");

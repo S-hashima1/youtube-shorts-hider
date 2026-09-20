@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         YouTube Shorts Hider
 // @namespace    https://github.com/S-hashima1/youtube-shorts-hider
-// @version      1.3.0
+// @version      1.3.1
 // @description  YouTube のショート動画(Shorts)を非表示にします。iPhone の Safari では「Userscripts」アプリで動作します。
 // @match        https://www.youtube.com/*
 // @match        https://m.youtube.com/*
@@ -14,8 +14,9 @@
 
   // ---- ブロックしたいキーワード ----------------------------------------
   // ここに書いた語を含む動画タイルを非表示にする(大文字小文字は区別しない)。
-  // 追加したい語があればこの配列に足すだけでよい。
-  const BLOCK_KEYWORDS = ["乃木坂", "nogizaka"];
+  // 初期状態は空。使いたい場合は例のように語を足す。
+  // 例: const BLOCK_KEYWORDS = ["切り抜き", "ドッキリ"];
+  const BLOCK_KEYWORDS = [];
 
   // ---- /shorts/ ページを通常プレイヤーへリダイレクト -------------------
 
@@ -201,7 +202,7 @@
   function showBadge() {
     if (!document.body) return;
     const badge = document.createElement("div");
-    badge.textContent = "Shorts Hider v1.3.0 動作中";
+    badge.textContent = "Shorts Hider v1.3.1 動作中";
     badge.style.cssText =
       "position:fixed;bottom:80px;left:50%;transform:translateX(-50%);" +
       "background:rgba(0,0,0,.75);color:#fff;padding:6px 14px;" +

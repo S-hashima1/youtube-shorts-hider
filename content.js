@@ -6,7 +6,7 @@
 
   const HIDE_CLASS = "ysh-hide-shorts";
   const JS_HIDE_ATTR = "data-ysh-hidden";
-  const DEFAULT_KEYWORDS = ["乃木坂"];
+  const DEFAULT_KEYWORDS = [];
   let enabled = true;
   let keywordsLower = DEFAULT_KEYWORDS.map((k) => k.toLowerCase());
 
